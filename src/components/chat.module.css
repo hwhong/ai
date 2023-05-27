@@ -1,0 +1,51 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  height: 48px;
+  padding: 0 4px 0 4px;
+  border-top: 1px solid #d4d4d4;
+}
+
+.input {
+  width: 100%;
+  margin: 4px;
+  font-size: 16px;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+}
+
+.button {
+  background: none;
+  color: inherit;
+  border: 1px solid #d4d4d4;
+  padding: 4px 8px;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  margin: 4px;
+  border-radius: 8px;
+}
+
+.messagesWrapper {
+  padding: 20px;
+  overflow: auto;
+}
+
+.message {
+  padding: 4px;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  width: fit-content;
+  max-width: 250px;
+  margin: 8px 0;
+}
+
+.user {
+  margin-left: auto;
+}

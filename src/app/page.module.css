@@ -2,16 +2,12 @@
   display: flex;
   width: 100vw;
   height: 100vh;
+  justify-content: space-between;
 }
 
 .section {
-  width: 50%;
-  height: 100%;
-}
-
-.pdfSection {
   overflow: hidden;
-  margin: 20px;
+  margin: 20px 80px;
   border: 1px solid #3c3c3c;
   border-radius: 4px;
   width: fit-content;

@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   // Search query is passed in request payload
-  const query = "How do I implement slide-out transition without using CSS?";
+  const { query } = JSON.parse(req.body);
 
   // OpenAI recommends replacing newlines with spaces for best results
   const input = query.replace(/\n/g, " ");
@@ -27,5 +27,7 @@ export default async function handler(
     match_count: 1, // Choose the number of matches
   });
 
-  res.status(200).json({ result: documents });
+  const result = documents.map((d: { content: string }) => d.content);
+
+  res.status(200).json({ result });
 }
