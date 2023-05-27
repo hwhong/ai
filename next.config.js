@@ -9,9 +9,6 @@ const nextConfig = {
 
     return config;
   },
-  env: {
-    OPENAI_API_KEY: "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",
-  },
 };
 
 module.exports = nextConfig;
