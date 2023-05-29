@@ -13,13 +13,18 @@ export default function Home() {
 
   useEffect(() => {
     const createEmbedding = async () => {
-      const response = await fetch("/api/create-embedding", {
-        method: "POST",
-        body: JSON.stringify({ file }),
-      });
-      return response;
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", new Blob([file]));
+        const response = await fetch("/api/create-embedding", {
+          method: "POST",
+          body: formData,
+        });
+        return response;
+      }
     };
-    console.log(createEmbedding());
+
+    createEmbedding();
   }, [file]);
 
   return (

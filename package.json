@@ -17,7 +17,9 @@
     "dotenv": "^16.0.3",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
+    "formidable": "^2.1.1",
     "langchain": "^0.0.75",
+    "multiparty": "^4.2.3",
     "next": "13.4.2",
     "openai": "^3.2.1",
     "pdf-parse": "^1.1.1",
@@ -27,5 +29,9 @@
     "react-pdf": "^7.0.1",
     "supabase": "^1.63.2",
     "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "@types/formidable": "^2.0.6",
+    "@types/multiparty": "^0.0.33"
   }
 }
