@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@langchain/openai": "^0.0.12",
+    "@mui/material": "^5.15.5",
     "@supabase/supabase-js": "^2.22.0",
     "@types/node": "20.1.3",
     "@types/react": "18.2.6",
@@ -32,6 +36,7 @@
   },
   "devDependencies": {
     "@types/formidable": "^2.0.6",
-    "@types/multiparty": "^0.0.33"
+    "@types/multiparty": "^0.0.33",
+    "@types/pdf-parse": "^1.1.4"
   }
 }

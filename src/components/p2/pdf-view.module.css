@@ -1,0 +1,16 @@
+.root {
+  height: 100vh;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.input {
+  display: none;
+}
+
+.uploadSection {
+  background-color: #dedede;
+  padding: 8px;
+  margin-bottom: 4px;
+}

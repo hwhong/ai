@@ -1,5 +1,6 @@
 .root {
   display: flex;
+  flex-direction: column;
   width: 100vw;
   height: 100vh;
   justify-content: space-between;
@@ -12,4 +13,15 @@
   border-radius: 4px;
   width: fit-content;
   min-width: 40%;
+}
+
+.toolbar {
+  width: 100%;
+  border-bottom: 1px solid #d4d4d4;
+  background-color: #d4d4d4;
+  padding: 8px;
+}
+
+.p2Wrapper {
+  display: flex;
 }
