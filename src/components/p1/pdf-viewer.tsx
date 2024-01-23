@@ -13,39 +13,5 @@ interface PDFViewerProps {
 }
 
 export default function PDFViewer({ file, onUpload }: PDFViewerProps) {
-  const [numPages, setNumPages] = useState(0);
-
-  function onFileChange(event: any) {
-    onUpload(event.target.files[0]);
-  }
-
-  function onDocumentLoadSuccess({ numPages }: any) {
-    setNumPages(numPages);
-  }
-
-  return (
-    <div>
-      <div className={styles.uploadSection}>
-        <label htmlFor="file" id="file" className={inter.className}>
-          <input onChange={onFileChange} type="file" />
-        </label>
-      </div>
-      <div className={styles.root}>
-        <Document
-          file={file}
-          onLoadSuccess={onDocumentLoadSuccess}
-          error={<div></div>}
-        >
-          {Array.from({ length: numPages }, (_, index) => (
-            <Page
-              key={`page_${index + 1}`}
-              pageNumber={index + 1}
-              renderAnnotationLayer={false}
-              renderTextLayer={false}
-            />
-          ))}
-        </Document>
-      </div>
-    </div>
-  );
+  return <div></div>;
 }

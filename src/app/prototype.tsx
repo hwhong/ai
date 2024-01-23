@@ -10,8 +10,6 @@ import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
 export function PrototypeComponent() {
-  const [vectorStore, setVectorStore] = useState(null);
-
   const initialize = async () => {
     // const embeddings = new OpenAIEmbeddings();
     // await embeddings.embedQuery("This is some sample text");
