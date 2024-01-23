@@ -1,33 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { PromptTemplate } from "@langchain/core/prompts";
-
-import * as parse from "pdf-parse";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { RunnableSequence } from "@langchain/core/runnables";
-import { Document } from "@langchain/core/documents";
+import { convertDocsToString, loadAndSplitDocs } from "@/utils/helper";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
   const loader = new PDFLoader("src/document/cs.pdf");
-
-  const rawCS229Docs = await loader.load();
-
-  const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 128,
-    chunkOverlap: 0,
-  });
-
-  const splitDocs = await splitter.splitDocuments(rawCS229Docs);
-
+  const splitDocs = await loadAndSplitDocs(loader);
   const vectorstore = await MemoryVectorStore.fromDocuments(
     splitDocs,
     new OpenAIEmbeddings()
   );
+  const retriever = vectorstore.asRetriever();
 
   /** Testing to get the relevant documents */
   // const retrievedDocs = await vectorstore.similaritySearch(
@@ -35,16 +23,6 @@ export default async function handler(
   //   4
   // );
   // const pageContents = retrievedDocs.map((doc) => doc.pageContent);
-
-  const retriever = vectorstore.asRetriever();
-
-  const convertDocsToString = (documents: Document[]): string => {
-    return documents
-      .map((document) => {
-        return `<doc>\n${document.pageContent}\n</doc>`;
-      })
-      .join("\n");
-  };
 
   const documentRetrievalChain = RunnableSequence.from([
     (input) => input.question,
