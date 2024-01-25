@@ -12,6 +12,10 @@ import { MessagesPlaceholder } from "@langchain/core/prompts";
 import { RunnablePassthrough } from "@langchain/core/runnables";
 import { RunnableWithMessageHistory } from "@langchain/core/runnables";
 import { ChatMessageHistory } from "@langchain/community/stores/message/in_memory";
+import {
+  ANSWER_CHAIN_SYSTEM_TEMPLATE,
+  REPHRASE_QUESTION_SYSTEM_TEMPLATE,
+} from "@/utils/prompt";
 
 export default async function handler(
   req: NextApiRequest,
@@ -32,75 +36,7 @@ export default async function handler(
   // );
   // const pageContents = retrievedDocs.map((doc) => doc.pageContent);
 
-  const documentRetrievalChain = RunnableSequence.from([
-    (input) => input.question,
-    (query) => retriever.getRelevantDocuments(query),
-    convertDocsToString,
-  ]);
-
-  /** ---------- PART II ------------ */
-
-  // const TEMPLATE_STRING = `You are an experienced researcher,
-  // expert at interpreting and answering questions based on provided sources.
-  // Using the provided context, answer the user's question
-  // to the best of your ability using only the resources provided.
-  // Be verbose!
-
-  // <context>
-
-  // {context}
-
-  // </context>
-
-  // Now, answer this question using the above context:
-
-  // {question}`;
-
-  // const answerGenerationPrompt =
-  //   ChatPromptTemplate.fromTemplate(TEMPLATE_STRING);
-
-  // const model = new ChatOpenAI({
-  //   modelName: "gpt-3.5-turbo-1106",
-  // });
-
-  // const retrievalChain = RunnableSequence.from([
-  //   {
-  //     context: documentRetrievalChain,
-  //     question: (input) => input.question,
-  //   },
-  //   answerGenerationPrompt,
-  //   model,
-  //   new StringOutputParser(),
-  // ]);
-
-  // const answer = await retrievalChain.invoke({
-  //   question: "What is the assignment late policy?",
-  // });
-
-  /** ---------- PART II ------------ */
-
-  const REPHRASE_QUESTION_SYSTEM_TEMPLATE = `Given the following conversation and a follow up question, 
-rephrase the follow up question to be a standalone question.`;
-
-  const rephraseQuestionChainPrompt = ChatPromptTemplate.fromMessages([
-    ["system", REPHRASE_QUESTION_SYSTEM_TEMPLATE],
-    new MessagesPlaceholder("history"),
-    [
-      "human",
-      "Rephrase the following question as a standalone question:\n{question}",
-    ],
-  ]);
-
-  const ANSWER_CHAIN_SYSTEM_TEMPLATE = `You are an experienced researcher, 
-expert at interpreting and answering questions based on provided sources.
-Using the below provided context and chat history, 
-answer the user's question to the best of 
-your ability 
-using only the resources provided. Be verbose!
-
-<context>
-{context}
-</context>`;
+  /** ---------- Chat Prompts ---------- */
 
   const answerGenerationChainPrompt = ChatPromptTemplate.fromMessages([
     ["system", ANSWER_CHAIN_SYSTEM_TEMPLATE],
@@ -111,10 +47,29 @@ using only the resources provided. Be verbose!
     ],
   ]);
 
+  const rephraseQuestionChainPrompt = ChatPromptTemplate.fromMessages([
+    ["system", REPHRASE_QUESTION_SYSTEM_TEMPLATE],
+    new MessagesPlaceholder("history"),
+    [
+      "human",
+      "Rephrase the following question as a standalone question:\n{question}",
+    ],
+  ]);
+
+  /** ---------- Chat Prompts ---------- */
+
+  /** ---------- Chains ---------- */
+
   const rephraseQuestionChain = RunnableSequence.from([
     rephraseQuestionChainPrompt,
     new ChatOpenAI({ temperature: 0.1, modelName: "gpt-3.5-turbo-1106" }),
     new StringOutputParser(),
+  ]);
+
+  const documentRetrievalChain = RunnableSequence.from([
+    (input) => input.question,
+    (query) => retriever.getRelevantDocuments(query),
+    convertDocsToString,
   ]);
 
   const conversationalRetrievalChain = RunnableSequence.from([
@@ -129,6 +84,8 @@ using only the resources provided. Be verbose!
     new StringOutputParser(),
   ]);
 
+  /** ---------- Chains ---------- */
+
   const messageHistory = new ChatMessageHistory();
 
   const finalRetrievalChain = new RunnableWithMessageHistory({
@@ -138,27 +95,23 @@ using only the resources provided. Be verbose!
     inputMessagesKey: "question",
   });
 
-  const originalQuestion = "What is the assignment late policy?";
+  /** Running */
 
-  // const originalAnswer = await finalRetrievalChain.invoke(
-  //   {
-  //     question: originalQuestion,
-  //   },
-  //   {
-  //     configurable: { sessionId: "test" },
-  //   }
-  // );
+  let question = {
+    question: "What is the assignment late policy?",
+  };
+  const configurable = { configurable: { sessionId: "test" } };
 
-  const finalResult = await finalRetrievalChain.invoke(
-    {
-      question: "Can you list them in bullet point form?",
-    },
-    {
-      configurable: { sessionId: "test" },
-    }
+  const originalAnswer = await finalRetrievalChain.invoke(
+    question,
+    configurable
   );
 
-  console.log(finalResult);
+  question = {
+    question: "Can you list them in bullet point form?",
+  };
+
+  const finalResult = await finalRetrievalChain.invoke(question, configurable);
 
   res.status(200).json({ finalResult });
 }
