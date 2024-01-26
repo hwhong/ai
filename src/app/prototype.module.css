@@ -1,0 +1,35 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d4d4d4;
+  padding: 20px;
+  align-items: center;
+  margin: 0 25%;
+}
+
+.dialogWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 500px;
+  width: 100%;
+  border: 1px solid black;
+}
+
+.bottomRow {
+  display: flex;
+}
+
+.msg {
+  padding: 10px;
+  border: 1px solid black;
+}
+
+.systemMsg {
+  background-color: aqua;
+  margin-right: auto;
+}
+
+.userMsg {
+  background-color: yellow;
+  margin-left: auto;
+}

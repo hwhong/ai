@@ -38,21 +38,21 @@ export default async function handler(
 
   /** ---------- Chat Prompts ---------- */
 
-  const answerGenerationChainPrompt = ChatPromptTemplate.fromMessages([
-    ["system", ANSWER_CHAIN_SYSTEM_TEMPLATE],
-    new MessagesPlaceholder("history"),
-    [
-      "human",
-      "Now, answer this question using the previous context and chat history:\n{standalone_question}",
-    ],
-  ]);
-
   const rephraseQuestionChainPrompt = ChatPromptTemplate.fromMessages([
     ["system", REPHRASE_QUESTION_SYSTEM_TEMPLATE],
     new MessagesPlaceholder("history"),
     [
       "human",
       "Rephrase the following question as a standalone question:\n{question}",
+    ],
+  ]);
+
+  const answerGenerationChainPrompt = ChatPromptTemplate.fromMessages([
+    ["system", ANSWER_CHAIN_SYSTEM_TEMPLATE],
+    new MessagesPlaceholder("history"),
+    [
+      "human",
+      "Now, answer this question using the previous context and chat history:\n{standalone_question}",
     ],
   ]);
 
@@ -72,6 +72,7 @@ export default async function handler(
     convertDocsToString,
   ]);
 
+  /** RunnablePassthrough allows to pass inputs unchanged or with the addition of extra keys.  */
   const conversationalRetrievalChain = RunnableSequence.from([
     RunnablePassthrough.assign({
       standalone_question: rephraseQuestionChain,
@@ -87,6 +88,14 @@ export default async function handler(
   /** ---------- Chains ---------- */
 
   const messageHistory = new ChatMessageHistory();
+
+  // RunnableWithMessageHistory
+  // wraps LCEL chain
+  // save part of the input to the chain (user defined question field) as the new human message
+  // also saves output of the chain as new AI messsage
+  // adds current history messages to input of wrapped chain under history messages key
+
+  // has inputMessagesKey, outputMessagesKey, historyMessagesKey
 
   const finalRetrievalChain = new RunnableWithMessageHistory({
     runnable: conversationalRetrievalChain,
