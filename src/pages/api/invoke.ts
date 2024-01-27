@@ -16,6 +16,7 @@ import {
   ANSWER_CHAIN_SYSTEM_TEMPLATE,
   REPHRASE_QUESTION_SYSTEM_TEMPLATE,
 } from "@/utils/prompt";
+import { OpenAIStream, StreamingTextResponse } from "ai";
 
 export default async function handler(
   req: NextApiRequest,
@@ -106,21 +107,28 @@ export default async function handler(
 
   /** Running */
 
-  let question = {
-    question: "What is the assignment late policy?",
-  };
+  // let question = {
+  //   question: "What is the assignment late policy?",
+  // };
   const configurable = { configurable: { sessionId: "test" } };
 
-  const originalAnswer = await finalRetrievalChain.invoke(
-    question,
+  // const originalAnswer = await finalRetrievalChain.invoke(
+  //   question,
+  //   configurable
+  // );
+
+  // question = {
+  //   question: "Can you list them in bullet point form?",
+  // };
+
+  const messages = req.body.messages;
+
+  const response = await finalRetrievalChain.invoke(
+    { question: messages[messages.length - 1].content },
     configurable
   );
 
-  question = {
-    question: "Can you list them in bullet point form?",
-  };
+  // const stream = OpenAIStream(response);
 
-  const finalResult = await finalRetrievalChain.invoke(question, configurable);
-
-  res.status(200).json({ finalResult });
+  res.status(200).json({ response });
 }
