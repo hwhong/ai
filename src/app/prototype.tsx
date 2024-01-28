@@ -11,8 +11,6 @@ enum Role {
 }
 
 export function PrototypeComponent() {
-  // const [messages, setMessages] = useState<Message[]>([]);
-  const [currentMsg, setCurrentMsg] = useState<string>("");
   const {
     messages,
     input,
