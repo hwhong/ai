@@ -5,7 +5,6 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { convertDocsToString, loadAndSplitDocs } from "@/utils/helper";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { RunnableMap } from "@langchain/core/runnables";
 import { ChatOpenAI } from "@langchain/openai";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { MessagesPlaceholder } from "@langchain/core/prompts";
@@ -15,8 +14,10 @@ import { ChatMessageHistory } from "@langchain/community/stores/message/in_memor
 import {
   ANSWER_CHAIN_SYSTEM_TEMPLATE,
   REPHRASE_QUESTION_SYSTEM_TEMPLATE,
-} from "@/utils/prompt";
-import { OpenAIStream, StreamingTextResponse } from "ai";
+  REPHRASE_QUESTION_HUMAN_MESSAGE,
+  ANSWER_GENERATION_HUMAN_MESSAGE,
+} from "@/utils/prompts";
+import { MODEL } from "@/utils/model";
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,46 +25,32 @@ export default async function handler(
 ) {
   const loader = new PDFLoader("src/document/cs.pdf");
   const splitDocs = await loadAndSplitDocs(loader);
+  const embedding = new OpenAIEmbeddings();
   const vectorstore = await MemoryVectorStore.fromDocuments(
     splitDocs,
-    new OpenAIEmbeddings()
+    embedding
   );
   const retriever = vectorstore.asRetriever();
-
-  /** Testing to get the relevant documents */
-  // const retrievedDocs = await vectorstore.similaritySearch(
-  //   "What is the course about?",
-  //   4
-  // );
-  // const pageContents = retrievedDocs.map((doc) => doc.pageContent);
 
   /** ---------- Chat Prompts ---------- */
 
   const rephraseQuestionChainPrompt = ChatPromptTemplate.fromMessages([
     ["system", REPHRASE_QUESTION_SYSTEM_TEMPLATE],
     new MessagesPlaceholder("history"),
-    [
-      "human",
-      "Rephrase the following question as a standalone question:\n{question}",
-    ],
+    ["human", REPHRASE_QUESTION_HUMAN_MESSAGE],
   ]);
 
   const answerGenerationChainPrompt = ChatPromptTemplate.fromMessages([
     ["system", ANSWER_CHAIN_SYSTEM_TEMPLATE],
     new MessagesPlaceholder("history"),
-    [
-      "human",
-      "Now, answer this question using the previous context and chat history:\n{standalone_question}",
-    ],
+    ["human", ANSWER_GENERATION_HUMAN_MESSAGE],
   ]);
-
-  /** ---------- Chat Prompts ---------- */
 
   /** ---------- Chains ---------- */
 
   const rephraseQuestionChain = RunnableSequence.from([
     rephraseQuestionChainPrompt,
-    new ChatOpenAI({ temperature: 0.1, modelName: "gpt-3.5-turbo-1106" }),
+    new ChatOpenAI({ temperature: 0.1, modelName: MODEL.GPT_35_TURBO_1106 }),
     new StringOutputParser(),
   ]);
 
@@ -82,7 +69,7 @@ export default async function handler(
       context: documentRetrievalChain,
     }),
     answerGenerationChainPrompt,
-    new ChatOpenAI({ modelName: "gpt-3.5-turbo" }),
+    new ChatOpenAI({ modelName: MODEL.GPT_35_TURBO }),
     new StringOutputParser(),
   ]);
 
@@ -106,29 +93,13 @@ export default async function handler(
   });
 
   /** Running */
-
-  // let question = {
-  //   question: "What is the assignment late policy?",
-  // };
   const configurable = { configurable: { sessionId: "test" } };
-
-  // const originalAnswer = await finalRetrievalChain.invoke(
-  //   question,
-  //   configurable
-  // );
-
-  // question = {
-  //   question: "Can you list them in bullet point form?",
-  // };
-
-  const messages = req.body.messages;
+  const msgs = req.body.messages;
 
   const response = await finalRetrievalChain.invoke(
-    { question: messages[messages.length - 1].content },
+    { question: msgs[msgs.length - 1].content },
     configurable
   );
 
-  // const stream = OpenAIStream(response);
-
-  res.status(200).json({ response });
+  res.status(200).json(response);
 }

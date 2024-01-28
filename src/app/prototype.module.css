@@ -1,35 +1,61 @@
 .root {
+  height: 100%;
+  padding: 20px;
+}
+
+.chatRoot {
   display: flex;
   flex-direction: column;
   border: 1px solid #d4d4d4;
-  padding: 20px;
   align-items: center;
-  margin: 0 25%;
+  height: 100%;
 }
 
 .dialogWrapper {
   display: flex;
   flex-direction: column;
-  min-height: 500px;
+
+  max-height: 800px;
+  overflow: auto;
   width: 100%;
-  border: 1px solid black;
+  height: 100%;
 }
 
 .bottomRow {
+  width: 100%;
+}
+
+.form {
   display: flex;
+  align-items: center;
+}
+
+.label {
+  width: 100%;
+}
+
+.input {
+  border-radius: 18px;
+}
+
+.sendButton {
+  margin-left: 8px;
 }
 
 .msg {
   padding: 10px;
-  border: 1px solid black;
+  border-radius: 18px;
+  max-width: 60%;
 }
 
 .systemMsg {
-  background-color: aqua;
+  background-color: #f0f0f0;
+  color: #050505;
   margin-right: auto;
 }
 
 .userMsg {
-  background-color: yellow;
+  background-color: #0a7cff;
+  color: white;
   margin-left: auto;
 }

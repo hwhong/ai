@@ -7,9 +7,9 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { PrototypeComponent } from "./prototype";
 
-const PDFViewer = dynamic(() => import("@/components/p2/pdf-viewer"), {
-  ssr: false,
-});
+// const PDFViewer = dynamic(() => import("@/components/p2/pdf-viewer"), {
+//   ssr: false,
+// });
 
 enum Prototype {
   ONE,
@@ -52,7 +52,7 @@ export default function Home() {
       ) : (
         <div className={styles.p2Wrapper}>
           <div className={styles.section}>
-            <PDFViewer file={file} onUpload={(newFile) => setFile(newFile)} />
+            {/* <PDFViewer file={file} onUpload={(newFile) => setFile(newFile)} /> */}
           </div>
           <div className={styles.section}>
             <Chat />
