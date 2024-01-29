@@ -1,64 +1,36 @@
 "use client";
 import styles from "./page.module.css";
-import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import { Chat } from "@/components/p2/chat";
-import Button from "@mui/material/Button";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import { PrototypeComponent } from "./prototype";
+import React, { useState } from "react";
+import { MemoryVectorStore } from "./memory-vector-store";
 
-// const PDFViewer = dynamic(() => import("@/components/p2/pdf-viewer"), {
-//   ssr: false,
-// });
-
-enum Prototype {
-  ONE,
-  TWO,
+enum PROJECT {
+  MEMORY_VECTOR_STORE = "Memory Vector Store",
 }
 
 export default function Home() {
-  const [selection, setSelection] = useState<Prototype>(Prototype.ONE);
-  const [file, setFile] = useState<string | ArrayBuffer | null>(null);
+  const [index, setIndex] = useState<number>(0);
 
-  useEffect(() => {
-    const createEmbedding = async () => {
-      if (file) {
-        const formData = new FormData();
-        formData.append("file", new Blob([file]));
-        const response = await fetch("/api/create-embedding", {
-          method: "POST",
-          body: formData,
-        });
-        return response;
-      }
-    };
-
-    createEmbedding();
-  }, [file]);
+  const projects = [
+    {
+      component: <MemoryVectorStore />,
+      selection: PROJECT.MEMORY_VECTOR_STORE,
+    },
+  ];
 
   return (
     <div className={styles.root}>
       <div className={styles.toolbar}>
-        <ButtonGroup
-          variant="contained"
-          aria-label="outlined primary button group"
-        >
-          <Button onClick={() => setSelection(Prototype.ONE)}>P1</Button>
-          <Button onClick={() => setSelection(Prototype.TWO)}>P2</Button>
-        </ButtonGroup>
+        {projects.map(({ selection }, i) => (
+          <div
+            key={selection}
+            className={styles.item}
+            onClick={() => setIndex(i)}
+          >
+            {projects[i].selection}
+          </div>
+        ))}
       </div>
-      {selection === Prototype.ONE ? (
-        <PrototypeComponent />
-      ) : (
-        <div className={styles.p2Wrapper}>
-          <div className={styles.section}>
-            {/* <PDFViewer file={file} onUpload={(newFile) => setFile(newFile)} /> */}
-          </div>
-          <div className={styles.section}>
-            <Chat />
-          </div>
-        </div>
-      )}
+      <div className={styles.content}>{projects[index].component}</div>
     </div>
   );
 }
