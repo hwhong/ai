@@ -24,15 +24,16 @@ export function PrototypeComponent() {
       <div className={styles.chatRoot}>
         <div className={styles.dialogWrapper}>
           {messages.map(({ role, content }) => {
+            const isAssistant = role === "assistant";
             return (
               <div
                 key={content}
                 className={classNames(styles.msg, {
-                  [styles.systemMsg]: role === "assistant",
+                  [styles.systemMsg]: isAssistant,
                   [styles.userMsg]: role === "user",
                 })}
               >
-                {content}
+                {isAssistant ? JSON.parse(content) : content}
               </div>
             );
           })}
