@@ -1,7 +1,7 @@
 "use client";
 import styles from "./page.module.css";
 import React, { useState } from "react";
-import { MemoryVectorStore } from "./memory-vector-store";
+import { MemoryVectorStore } from "./memory-vector-store/memory-vector-store";
 
 enum PROJECT {
   MEMORY_VECTOR_STORE = "Memory Vector Store",

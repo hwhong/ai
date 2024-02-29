@@ -3,7 +3,10 @@ import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { RunnableSequence } from "@langchain/core/runnables";
-import { convertDocsToString, loadAndSplitDocs } from "@/utils/helper";
+import {
+  convertDocsToString,
+  loadAndSplitDocs,
+} from "@/utils/memory-vector-store/helper";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import { StringOutputParser } from "@langchain/core/output_parsers";
@@ -16,8 +19,8 @@ import {
   REPHRASE_QUESTION_SYSTEM_TEMPLATE,
   REPHRASE_QUESTION_HUMAN_MESSAGE,
   ANSWER_GENERATION_HUMAN_MESSAGE,
-} from "@/utils/prompts";
-import { MODEL } from "@/utils/model";
+} from "@/utils/memory-vector-store/prompts";
+import { MODEL } from "@/utils/memory-vector-store/model";
 
 export default async function handler(
   req: NextApiRequest,
