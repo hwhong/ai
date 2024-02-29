@@ -20,7 +20,7 @@ import {
   REPHRASE_QUESTION_HUMAN_MESSAGE,
   ANSWER_GENERATION_HUMAN_MESSAGE,
 } from "@/utils/memory-vector-store/prompts";
-import { MODEL } from "@/utils/memory-vector-store/model";
+import { MODEL } from "@/utils/model";
 
 export default async function handler(
   req: NextApiRequest,

@@ -2,9 +2,11 @@
 import styles from "./page.module.css";
 import React, { useState } from "react";
 import { MemoryVectorStore } from "./memory-vector-store/memory-vector-store";
+import { Conversation } from "./conversation/root";
 
 enum PROJECT {
   MEMORY_VECTOR_STORE = "Memory Vector Store",
+  CONVERSATION = "CONVERSATION",
 }
 
 export default function Home() {
@@ -14,6 +16,10 @@ export default function Home() {
     {
       component: <MemoryVectorStore />,
       selection: PROJECT.MEMORY_VECTOR_STORE,
+    },
+    {
+      component: <Conversation />,
+      selection: PROJECT.CONVERSATION,
     },
   ];
 
