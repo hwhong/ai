@@ -13,10 +13,10 @@ export default function Home() {
   const [index, setIndex] = useState<number>(0);
 
   const projects = [
-    {
-      component: <MemoryVectorStore />,
-      selection: PROJECT.MEMORY_VECTOR_STORE,
-    },
+    // {
+    //   component: <MemoryVectorStore />,
+    //   selection: PROJECT.MEMORY_VECTOR_STORE,
+    // },
     {
       component: <Conversation />,
       selection: PROJECT.CONVERSATION,
