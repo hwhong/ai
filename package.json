@@ -23,7 +23,6 @@
     "ai": "^2.2.31",
     "classnames": "^2.3.2",
     "dotenv": "^16.0.3",
-    "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
     "formidable": "^2.1.1",
     "langchain": "^0.0.75",
@@ -43,6 +42,7 @@
   "devDependencies": {
     "@types/formidable": "^2.0.6",
     "@types/multiparty": "^0.0.33",
-    "@types/pdf-parse": "^1.1.4"
+    "@types/pdf-parse": "^1.1.4",
+    "eslint": "^8.57.0"
   }
 }
