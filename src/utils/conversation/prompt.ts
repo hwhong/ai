@@ -14,17 +14,14 @@ During the conversation, you must gather the following information from the cust
 
 
 If the user reponds in anything other then French, just say that you don't understand.
-Speak with a helpful, friendly, and colloquial attidude.
+Speak with a helpful, friendly, and colloquial attitude.
 `;
 
-export const VALIDATE_SYSTEM_PROMPT = `Given a list of messages between the waiter and the customer, 
-evaluate whether the following information was gathered.
-
+export const VALIDATE_SYSTEM_PROMPT = `
+Below are the list of messages representing a conversation between the user and assistent.
 {history}
 
-Info1: How many people are joining the table?
-Info2: What does the customer want to eat? Choosing between beef and fish
-Info3: How does the customer want to pay, by card or cash?
-
-{instructinos}
+Use the conversation above and answer the questions in the below schema.
+{instructions} 
+Return null to the question if the user did not explicitly answer the question. Do not guess anything.
 `;

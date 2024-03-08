@@ -19,7 +19,7 @@ export function Conversation() {
       });
     };
 
-    if (messages.length > 1) {
+    if (messages.length > 1 && messages[messages.length - 1].role === "user") {
       validate();
     }
   }, [messages]);

@@ -1,5 +1,6 @@
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { ChatOpenAI as OpenAI } from "@langchain/openai";
+import { ChatOpenAI as ChatModel } from "@langchain/openai";
+import { OpenAI } from "@langchain/openai";
 
 export enum MODEL {
   GPT_35_TURBO_1106 = "gpt-3.5-turbo-1106",
@@ -11,7 +12,12 @@ export const model = new ChatOpenAI({
   modelName: MODEL.GPT_35_TURBO,
 });
 
-export const openAiModel = new OpenAI({
+export const openAiChatModel = new ChatModel({
   openAIApiKey: process.env.OPENAI_API_KEY,
   modelName: MODEL.GPT_35_TURBO,
+});
+
+export const openAi = new OpenAI({
+  temperature: 0,
+  openAIApiKey: process.env.OPENAI_API_KEY,
 });
