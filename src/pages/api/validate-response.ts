@@ -1,4 +1,5 @@
 import {
+  SUMMARIZE_SYSTEM_PROMPT,
   VALIDATE_SYSTEM_PROMPT,
   VALIDATE_SYSTEM_PROMPT as template,
 } from "@/utils/conversation/prompt";
@@ -23,20 +24,16 @@ export default async function handler(
   const parser = StructuredOutputParser.fromZodSchema(
     z.object({
       info1: z
-        .string()
+        .boolean()
         .describe(
-          'How many people are joining the table". Return null if answer unclear.'
+          "Whether the user mentioned how many people are joining the table."
         ),
       info2: z
-        .string()
-        .describe(
-          `What does the user want to eat. Return null if answer unclear.`
-        ),
+        .boolean()
+        .describe(`Whether the user mentioned what he wants to eat.`),
       info3: z
-        .string()
-        .describe(
-          "How does the user want to pay. Return null if answer unclear."
-        ),
+        .boolean()
+        .describe("Whether the user mentioned how he wants to pay"),
     })
   );
 
@@ -46,15 +43,38 @@ export default async function handler(
   //     instructions: parser.getFormatInstructions(),
   //   });
 
-  const chain = RunnableSequence.from([
-    PromptTemplate.fromTemplate(VALIDATE_SYSTEM_PROMPT),
-    openAi,
-  ]);
-
-  const result = await chain.invoke({
+  const input = await PromptTemplate.fromTemplate(
+    SUMMARIZE_SYSTEM_PROMPT
+  ).format({
     history: JSON.stringify(messages),
-    instructions: parser.getFormatInstructions(),
   });
+  const summary = await openAi.call(input);
+
+  const validate = await PromptTemplate.fromTemplate(
+    VALIDATE_SYSTEM_PROMPT
+  ).format({
+    summary,
+    question:
+      "Did the user say how he wants to pay? If yes, return true, else false.",
+  });
+  const result = await openAi.call(validate);
+  //   const chain = RunnableSequence.from([
+  //     PromptTemplate.fromTemplate(VALIDATE_SYSTEM_PROMPT),
+  //     openAi,
+  //   ]);
+
+  //   const result = await chain.invoke({
+  //     history: JSON.stringify(messages),
+  //     instructions: parser.getFormatInstructions(),
+  //   });
+  //   let result;
+  //   try {
+  //     result = await openAi.call(input);
+  //     // const blah = await parser.parse(result);
+  //     console.log(result);
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
 
   res.status(200).json(result);
 }
