@@ -1,15 +1,20 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./conversation.module.css";
 import { IconButton, TextField } from "@mui/material";
 import classNames from "classnames";
 import { useChat } from "ai/react";
 import SendIcon from "@mui/icons-material/Send";
+import MicroPhone from "@mui/icons-material/KeyboardVoice";
 
 export function Conversation() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: "api/ai-respond",
   });
+  const [isSpeechOn, setIsSpeechOn] = useState<boolean>(false);
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
 
   useEffect(() => {
     const validate = async () => {
@@ -23,6 +28,23 @@ export function Conversation() {
       validate();
     }
   }, [messages]);
+
+  useEffect(() => {
+    recognition.onresult = (result: any) => {
+      const transcript = result.results[0][0].transcript;
+      handleInputChange({ target: { value: transcript } } as any);
+    };
+  });
+
+  const speechToText = () => {
+    if (!isSpeechOn) {
+      recognition.start();
+      setIsSpeechOn(true);
+    } else {
+      recognition.stop();
+      setIsSpeechOn(false);
+    }
+  };
 
   return (
     <div className={styles.root}>
@@ -58,6 +80,13 @@ export function Conversation() {
             </label>
             <IconButton type="submit" className={styles.sendButton}>
               <SendIcon />
+            </IconButton>
+            <IconButton
+              color={isSpeechOn ? "primary" : "default"}
+              className={styles.sendButton}
+              onClick={speechToText}
+            >
+              <MicroPhone />
             </IconButton>
           </form>
         </div>
