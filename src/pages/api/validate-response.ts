@@ -26,14 +26,14 @@ export default async function handler(
       info1: z
         .boolean()
         .describe(
-          "Whether the user mentioned how many people are joining the table."
+          "Whether the customer mentioned how many people are joining the table."
         ),
       info2: z
         .boolean()
-        .describe(`Whether the user mentioned what he wants to eat.`),
+        .describe(`Whether the customer mentioned what he wants to eat.`),
       info3: z
         .boolean()
-        .describe("Whether the user mentioned how he wants to pay"),
+        .describe("Whether the customer mentioned how he wants to pay"),
     })
   );
 
