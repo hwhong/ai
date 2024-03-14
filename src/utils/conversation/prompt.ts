@@ -18,25 +18,16 @@ Speak with a helpful, friendly, and colloquial attitude.
 Don't ask all the questions at once, and have a normal conversation like how a person would.
 `;
 
-export const SUMMARIZE_SYSTEM_PROMPT = `
-Below are the list of messages representing a conversation between the user and assistent.
+export const VALIDATE_SYSTEM_PROMPT = `
+The following is a conversation with between a waiter and a customer, which is delimited by triple dashes.
 
-Conversation Messages:
 ---
 {history}
 ---
 
-Summarize the conversation.
-`;
+Answer the question, which delimited by angle brackets, by looking at the conversation. 
+If the answer to the question exists, output the word "true". If the answer doesn't exist, output the word "false".
+Never guess the answer. If the answer is unclear, always return "false". Only return a single word "true" or "false".
 
-export const VALIDATE_SYSTEM_PROMPT = `
-Givn a summary of a conversation below
----
-{summary}
----
-
-Answer the question in the schema below.
----
-{question}
----
+<{question}>
 `;

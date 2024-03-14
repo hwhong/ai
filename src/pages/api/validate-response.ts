@@ -1,5 +1,4 @@
 import {
-  SUMMARIZE_SYSTEM_PROMPT,
   VALIDATE_SYSTEM_PROMPT,
   VALIDATE_SYSTEM_PROMPT as template,
 } from "@/utils/conversation/prompt";
@@ -9,6 +8,7 @@ import { StructuredOutputParser } from "langchain/output_parsers";
 import { z } from "zod";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
+import { stringifyConversation } from "@/utils/conversation/helper";
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,21 +21,21 @@ export default async function handler(
     })
   );
 
-  const parser = StructuredOutputParser.fromZodSchema(
-    z.object({
-      info1: z
-        .boolean()
-        .describe(
-          "Whether the customer mentioned how many people are joining the table."
-        ),
-      info2: z
-        .boolean()
-        .describe(`Whether the customer mentioned what he wants to eat.`),
-      info3: z
-        .boolean()
-        .describe("Whether the customer mentioned how he wants to pay"),
-    })
-  );
+  // const parser = StructuredOutputParser.fromZodSchema(
+  //   z.object({
+  //     info1: z
+  //       .boolean()
+  //       .describe(
+  //         "Whether the customer mentioned how many people are joining the table."
+  //       ),
+  //     info2: z
+  //       .boolean()
+  //       .describe(`Whether the customer mentioned what he wants to eat.`),
+  //     info3: z
+  //       .boolean()
+  //       .describe("Whether the customer mentioned how he wants to pay"),
+  //   })
+  // );
 
   //   const prompt = PromptTemplate.fromTemplate(template);
   //   const result = await prompt.pipe(openAiModel).invoke({
@@ -43,21 +43,19 @@ export default async function handler(
   //     instructions: parser.getFormatInstructions(),
   //   });
 
-  const input = await PromptTemplate.fromTemplate(
-    SUMMARIZE_SYSTEM_PROMPT
-  ).format({
-    history: JSON.stringify(messages),
-  });
-  const summary = await openAi.call(input);
-
   const validate = await PromptTemplate.fromTemplate(
     VALIDATE_SYSTEM_PROMPT
   ).format({
-    summary,
+    history: stringifyConversation(messages, {
+      user: "Customer",
+      assistant: "Waiter",
+    }),
     question:
-      "Did the user say how he wants to pay? If yes, return true, else false.",
+      "Did the customer mentioned how many people are joining the table?",
   });
+
   const result = await openAi.call(validate);
+
   //   const chain = RunnableSequence.from([
   //     PromptTemplate.fromTemplate(VALIDATE_SYSTEM_PROMPT),
   //     openAi,
