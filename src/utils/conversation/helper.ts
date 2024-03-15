@@ -9,7 +9,9 @@ export const stringifyConversation = (
   let result = "\n";
 
   for (const { role, content } of conversation) {
-    result += `<${roleMap[role]}>:` + " " + content + "\n";
+    if (role === "user") {
+      result += `<${roleMap[role]}>:` + " " + content + "\n";
+    }
   }
 
   return result;

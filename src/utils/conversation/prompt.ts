@@ -25,9 +25,26 @@ The following is a conversation with between a waiter and a customer, which is d
 {history}
 ---
 
-Answer the question, which delimited by angle brackets, by looking at the conversation. 
+Answer the question, which is delimited by angle brackets, by looking at the conversation text. 
 If the answer to the question exists, output the word "true". If the answer doesn't exist, output the word "false".
-Never guess the answer. If the answer is unclear, always return "false". Only return a single word "true" or "false".
+Never guess the answer. If the answer is unclear, always return "false".
+Give your answer as a single word, either "true" or "false".
+
+<{question}>
+`;
+
+export const VALIDATE_II_SYSTEM_PROMPT = `
+The following is a list of messages from a customer, taken from a conversation with a waiter.
+The list of messages is delimited by triple dashes.
+
+---
+{history}
+---
+
+Answer the question, which is delimited by angle brackets, by looking at the messages. 
+If the answer to the question exists, output the word "true". If the answer doesn't exist, output the word "false".
+Never guess the answer. If the answer is unclear, always return "false".
+Give your answer as a single word, either "true" or "false".
 
 <{question}>
 `;
