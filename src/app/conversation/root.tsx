@@ -11,7 +11,14 @@ export function Conversation() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: "api/ai-respond",
   });
+
   const [isSpeechOn, setIsSpeechOn] = useState<boolean>(false);
+  const questions: string[] = [
+    "How many people are joining the table?",
+    "What does the customer want to eat? Choosing between beef and fish",
+    "How does the customer want to pay, by card or cash?",
+  ];
+  const [answers, setAnswers] = useState<boolean[]>([]);
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition();
@@ -20,12 +27,15 @@ export function Conversation() {
     const validate = async () => {
       const result = await fetch("api/validate-response", {
         method: "POST",
-        body: JSON.stringify({ messages }),
+        body: JSON.stringify({ messages, questions: Object.keys(questions) }),
       });
+      const data: boolean[] = await result.json();
+      setAnswers(data);
     };
 
     if (messages.length > 1 && messages[messages.length - 1].role === "user") {
-      validate();
+      const result = validate();
+      console.log(result);
     }
   }, [messages]);
 
@@ -48,6 +58,14 @@ export function Conversation() {
 
   return (
     <div className={styles.root}>
+      <div>
+        {questions.map((q, i) => (
+          <div key={q}>
+            <div key={q}>{q}</div>
+            <div key={q}>{answers[i] ?? false}</div>
+          </div>
+        ))}
+      </div>
       <div className={styles.chatRoot}>
         <div className={styles.dialogWrapper}>
           {messages.map(({ role, content }) => {
