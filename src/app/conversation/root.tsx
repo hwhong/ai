@@ -27,7 +27,7 @@ export function Conversation() {
     const validate = async () => {
       const result = await fetch("api/validate-response", {
         method: "POST",
-        body: JSON.stringify({ messages, questions: Object.keys(questions) }),
+        body: JSON.stringify({ messages, questions: questions }),
       });
       const data: boolean[] = await result.json();
       setAnswers(data);

@@ -1,43 +1,26 @@
 import { CONVERSATION_SYSTEM_PROMPT } from "@/utils/conversation/prompt";
-import { model } from "@/utils/model";
-import {
-  ChatPromptTemplate,
-  HumanMessagePromptTemplate,
-  MessagesPlaceholder,
-  SystemMessagePromptTemplate,
-} from "langchain/prompts";
+import { realOpenAI } from "@/utils/model";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { BufferMemory } from "langchain/memory";
-import { ConversationChain } from "langchain/chains";
+import { ChatCompletionMessageParam } from "openai/resources";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const messages = req.body.messages;
-  const userMessage = messages[messages.length - 1].content;
+  const messages: ChatCompletionMessageParam[] = req.body.messages.map(
+    ({ role, content }: any) => ({
+      role,
+      content,
+    })
+  );
 
-  const prompt = ChatPromptTemplate.fromPromptMessages([
-    SystemMessagePromptTemplate.fromTemplate(CONVERSATION_SYSTEM_PROMPT),
-    new MessagesPlaceholder("history"),
-    HumanMessagePromptTemplate.fromTemplate("{input}"),
-  ]);
-
-  const conversation_chain = new ConversationChain({
-    memory: new BufferMemory({
-      returnMessages: true,
-      memoryKey: "history",
-      // input key is used to differentiate the actual input to the conversation
-      // to other key params. e.g was using format_instruction
-      inputKey: "input",
-    }),
-    prompt: prompt,
-    llm: model,
+  const completion = await realOpenAI.chat.completions.create({
+    messages: [
+      { role: "system", content: CONVERSATION_SYSTEM_PROMPT },
+      ...messages,
+    ],
+    model: "gpt-3.5-turbo",
   });
 
-  const { response } = await conversation_chain.call({
-    input: userMessage,
-  });
-
-  res.status(200).json(response);
+  res.status(200).json(completion.choices[0].message.content);
 }
